@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weber State Investors Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+<style>
+  :root{
+    --ink:#201533;
+    --purple:#4B2E83;
+    --purple-deep:#332059;
+    --purple-soft:#6B5B8A;
+    --gold:#C89B3C;
+    --cream:#F6F3EC;
+    --white:#FFFFFF;
+    --line:#DDD5C8;
+    --up:#3F7D5C;
+    --down:#B24A3D;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "IBM Plex Sans", -apple-system, Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important;}
+  }
+
+  header.site-nav{
+    position:sticky; top:0; z-index:50;
+    background:var(--purple);
+    color:var(--white);
+    border-bottom:3px solid var(--gold);
+    padding-top:env(safe-area-inset-top, 0px);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+  }
+  .wordmark{
+    display:flex; align-items:baseline; gap:10px;
+    font-family:var(--serif); font-weight:600; font-size:1.25rem;
+    letter-spacing:0.01em;
+    text-decoration:none; color:var(--white);
+  }
+  .wordmark small{
+    font-family:var(--mono); font-weight:400; font-size:0.68rem;
+    color:var(--gold); letter-spacing:0.08em;
+  }
+  nav.links{display:flex; gap:2px; align-items:center;}
+  nav.links button{
+    font-family:var(--sans); font-size:0.92rem; font-weight:500;
+    background:none; border:none; color:rgba(255,255,255,0.78);
+    padding:10px 16px; cursor:pointer; border-radius:2px;
+    transition:color .15s ease, background .15s ease;
+  }
+  nav.links button:hover{color:var(--white); background:rgba(255,255,255,0.08);}
+  nav.links button.active{color:var(--white);}
+  nav.links button.active{position:relative;}
+  nav.links button.active::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:3px;
+    height:2px; background:var(--gold);
+  }
+  .join-btn{
+    font-family:var(--sans); font-size:0.88rem; font-weight:600;
+    background:var(--gold); color:var(--purple-deep);
+    border:none; padding:9px 18px; border-radius:2px; cursor:pointer;
+    margin-left:10px;
+  }
+  .join-btn:hover{background:#dcae4d;}
+  button:focus-visible, a:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  .ticker-wrap{
+    background:var(--ink); overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid #3a2a54;
+  }
+  .ticker-track{
+    display:inline-flex; padding:9px 0;
+    animation:scrollTicker 32s linear infinite;
+  }
+  @keyframes scrollTicker{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+  .ticker-item{
+    font-family:var(--mono); font-size:0.82rem; color:#cfc6e0;
+    padding:0 22px; border-right:1px solid #3a2a54; white-space:nowrap;
+  }
+  .ticker-item .sym{color:var(--white); font-weight:500; margin-right:8px;}
+  .ticker-item .up{color:#8fd0ac;}
+  .ticker-item .down{color:#e39a86;}
+
+  main{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .eyebrow-plain{
+    font-family:var(--mono); font-size:0.78rem; color:var(--purple-soft);
+    margin:0 0 10px 0;
+  }
+  section{padding:64px 0; border-bottom:1px solid var(--line);}
+  section:last-child{border-bottom:none;}
+
+  h1{
+    font-family:var(--serif); font-weight:600; font-size:3.1rem; line-height:1.08;
+    margin:0 0 22px 0; max-width:12ch; color:var(--purple-deep);
+  }
+  h2{
+    font-family:var(--serif); font-weight:600; font-size:1.9rem; line-height:1.2;
+    margin:0 0 18px 0; color:var(--purple-deep);
+  }
+  h3{
+    font-family:var(--serif); font-weight:600; font-size:1.25rem;
+    margin:0 0 8px 0; color:var(--ink);
+  }
+  p{line-height:1.65; color:#3a3049; max-width:62ch;}
+  p.lede{font-size:1.12rem; color:#2b2140;}
+
+  .hero{display:grid; grid-template-columns:1.3fr 1fr; gap:56px; align-items:start; padding-top:56px;}
+  .hero-stats{display:flex; flex-direction:column; gap:0; border-left:1px solid var(--line);}
+  .stat{padding:18px 0 18px 24px; border-bottom:1px solid var(--line);}
+  .stat:last-child{border-bottom:none;}
+  .stat .num{font-family:var(--serif); font-size:2.1rem; color:var(--purple); font-weight:600; display:block;}
+  .stat .lab{font-family:var(--sans); font-size:0.85rem; color:var(--purple-soft);}
+  .cta-row{display:flex; gap:14px; margin-top:28px; flex-wrap:wrap;}
+  .btn-primary, .btn-secondary{
+    font-family:var(--sans); font-weight:600; font-size:0.95rem;
+    padding:13px 24px; border-radius:2px; cursor:pointer; text-decoration:none;
+    display:inline-block; border:1px solid transparent;
+  }
+  .btn-primary{background:var(--purple); color:var(--white);}
+  .btn-primary:hover{background:var(--purple-deep);}
+  .btn-secondary{background:transparent; color:var(--purple); border-color:var(--purple);}
+  .btn-secondary:hover{background:rgba(75,46,131,0.06);}
+
+  .quicklinks{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--line);}
+  .quicklink{padding:30px 26px 30px 0; border-right:1px solid var(--line);}
+  .quicklink:last-child{border-right:none; padding-right:0;}
+  .quicklink .idx{font-family:var(--mono); font-size:0.78rem; color:var(--gold);}
+  .quicklink a.goto{font-weight:600; color:var(--purple); text-decoration:none;}
+  .quicklink a.goto:hover{text-decoration:underline;}
+
+  .officer-list{list-style:none; margin:0; padding:0;}
+  .officer-list li{
+    display:grid; grid-template-columns:1.4fr 1.4fr 1fr; gap:18px;
+    padding:16px 0; border-bottom:1px solid var(--line);
+    font-size:0.95rem;
+  }
+  .officer-list li .name{font-weight:600; color:var(--ink);}
+  .officer-list li .role{color:var(--purple-soft); font-family:var(--mono); font-size:0.82rem;}
+  .officer-list li .sector{color:#5a5069;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:48px;}
+
+  .overview-row{display:flex; gap:0; border:1px solid var(--line); border-radius:2px; overflow:hidden; margin-bottom:44px;}
+  .ov{flex:1; padding:22px 24px; border-right:1px solid var(--line); background:var(--white);}
+  .ov:last-child{border-right:none;}
+  .ov .num{font-family:var(--serif); font-size:1.7rem; font-weight:600; color:var(--purple-deep); display:block;}
+  .ov .num.pos{color:var(--up);}
+  .ov .num.down{color:var(--down);}
+  .ov .lab{font-size:0.8rem; color:var(--purple-soft);}
+
+  .table-scroll{overflow-x:auto;}
+  table.holdings{width:100%; border-collapse:collapse; font-size:0.92rem;}
+  table.holdings th{
+    text-align:left; font-family:var(--mono); font-weight:400; font-size:0.75rem;
+    color:var(--purple-soft); padding:10px 12px; border-bottom:1px solid var(--ink);
+  }
+  table.holdings td{padding:13px 12px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums;}
+  table.holdings tr:hover td{background:rgba(75,46,131,0.03);}
+  table.holdings td.sym{font-weight:600; color:var(--purple-deep);}
+  table.holdings td.num, table.holdings th.num{text-align:right;}
+  .chg.up{color:var(--up); font-weight:600;}
+  .chg.down{color:var(--down); font-weight:600;}
+
+  .live-dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--purple-soft); margin-right:7px; vertical-align:1px;}
+  .live-dot.on{background:var(--up); box-shadow:0 0 0 3px rgba(63,125,92,0.18);}
+  .live-dot.off{background:var(--down);}
+  @keyframes flashUp{from{background:rgba(63,125,92,0.22);} to{background:transparent;}}
+  @keyframes flashDown{from{background:rgba(178,74,61,0.20);} to{background:transparent;}}
+  table.holdings td.flash-up{animation:flashUp 1.6s ease-out;}
+  table.holdings td.flash-down{animation:flashDown 1.6s ease-out;}
+  .action{font-family:var(--mono); font-size:0.78rem; font-weight:500; letter-spacing:0.04em;}
+  .action.buy{color:var(--up);}
+  .action.sell{color:var(--down);}
+  .trades{margin-top:52px;}
+
+  .alloc{margin-top:52px;}
+  .alloc-row{display:grid; grid-template-columns:150px 1fr 60px; align-items:center; gap:14px; padding:9px 0;}
+  .alloc-row .bar-track{background:var(--line); height:10px; border-radius:2px; overflow:hidden;}
+  .alloc-row .bar-fill{height:100%; background:var(--purple); border-radius:2px;}
+  .alloc-row .pct{font-family:var(--mono); font-size:0.82rem; text-align:right; color:var(--purple-soft);}
+  .alloc-row .name{font-size:0.9rem;}
+
+  .disclaimer{
+    margin-top:48px; padding:18px 22px; background:var(--white);
+    border-left:3px solid var(--gold); font-size:0.85rem; color:#5a5069; max-width:none;
+  }
+
+  .tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line);}
+  .tier{padding:30px 26px; border-right:1px solid var(--line);}
+  .tier:last-child{border-right:none;}
+  .tier .amt{font-family:var(--serif); font-size:1.9rem; color:var(--purple); font-weight:600;}
+  .tier .desc{font-size:0.88rem; color:#4a4059; margin-top:10px; line-height:1.55;}
+  .track-list{list-style:none; padding:0; margin:0;}
+  .track-list li{
+    padding:20px 0; border-bottom:1px solid var(--line);
+    display:grid; grid-template-columns:180px 1fr; gap:24px;
+  }
+  .track-list li .track-name{font-weight:600; font-family:var(--serif); font-size:1.05rem; color:var(--purple-deep);}
+
+  footer{background:var(--ink); color:#cfc6e0; margin-top:0;}
+  .footer-inner{
+    max-width:1180px; margin:0 auto; padding:44px 28px calc(44px + env(safe-area-inset-bottom, 0px));
+    display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+  footer .fcol{font-size:0.85rem; line-height:1.7;}
+  footer a{text-decoration:none; color:#cfc6e0;}
+  footer a:hover{color:var(--white);}
+  footer .fnote{font-size:0.78rem; color:#8b7fa8; max-width:60ch; margin-top:10px;}
+
+  @media (max-width: 880px){
+    nav.links{display:none;}
+    .hero{grid-template-columns:1fr;}
+    .quicklinks{grid-template-columns:1fr;}
+    .quicklink{border-right:none; border-bottom:1px solid var(--line); padding:26px 0;}
+    .two-col{grid-template-columns:1fr;}
+    .tiers{grid-template-columns:1fr;}
+    .tier{border-right:none; border-bottom:1px solid var(--line);}
+    .overview-row{flex-wrap:wrap;}
+    .ov{flex:1 1 50%; border-bottom:1px solid var(--line);}
+    h1{font-size:2.3rem;}
+    table.holdings{font-size:0.8rem;}
+    .officer-list li{grid-template-columns:1fr; gap:4px;}
+  }
+
+  /* =====================================================================
+     RESEARCH PAGE (company analyzer). Everything below is scoped to
+     #page-research so it can't affect the rest of the site.
+     ===================================================================== */
+  #page-research [hidden]{display:none !important;}
+
+  #page-research .rs-settings{
+    background:var(--white); border:1px solid var(--line); border-left:3px solid var(--gold);
+    padding:18px 22px; margin:32px 0 24px;
+  }
+  #page-research .rs-settings summary{
+    font-family:var(--mono); font-size:0.78rem; color:var(--purple-soft);
+    letter-spacing:0.04em; text-transform:uppercase; cursor:pointer;
+  }
+  #page-research .rs-settings[open] summary{margin-bottom:12px;}
+  #page-research .rs-help{font-size:0.85rem; color:#5a5069; margin:0 0 16px; max-width:none;}
+
+  #page-research .rs-grid-2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  #page-research .rs-field{display:flex; flex-direction:column; gap:6px;}
+  #page-research .rs-field > span{font-family:var(--mono); font-size:0.75rem; color:var(--purple-soft);}
+  #page-research .rs-field strong{color:var(--purple-deep); font-weight:500;}
+
+  #page-research input[type="text"],
+  #page-research input[type="password"]{
+    font-family:var(--sans); font-size:0.95rem; color:var(--ink);
+    background:var(--white); border:1px solid var(--line); border-radius:2px;
+    padding:11px 12px;
+  }
+  #page-research input[type="text"]:focus,
+  #page-research input[type="password"]:focus{
+    outline:2px solid var(--gold); outline-offset:1px; border-color:var(--purple);
+  }
+  #page-research #rs-ticker{font-family:var(--mono); text-transform:uppercase; letter-spacing:0.04em;}
+  #page-research input[type="range"]{accent-color:var(--purple); margin:10px 0;}
+
+  #page-research .rs-search{
+    display:grid; grid-template-columns:1fr 1.2fr auto; gap:24px; align-items:end;
+    padding:24px 0; margin-bottom:24px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  #page-research .btn-primary{border:none;}
+  #page-research .btn-primary:disabled{opacity:0.6; cursor:wait;}
+
+  #page-research .rs-status{
+    font-family:var(--mono); font-size:0.8rem; max-width:none;
+    background:var(--white); border-left:3px solid var(--purple-soft);
+    padding:12px 16px; margin:0 0 16px;
+  }
+  #page-research .rs-status.error{border-left-color:var(--down); color:var(--down);}
+  #page-research .rs-status.warning{border-left-color:var(--gold); color:#6b5320;}
+
+  #page-research .rs-company{margin:12px 0 20px;}
+  #page-research .rs-company h3{font-size:1.6rem; color:var(--purple-deep); margin:0 0 4px;}
+  #page-research .rs-meta{font-family:var(--mono); font-size:0.78rem; color:var(--purple-soft); margin:0; max-width:none;}
+
+  #page-research .overview-row{margin-bottom:20px;}
+  #page-research .ov .num{font-size:1.45rem;}
+
+  /* Tabs never scroll; on very narrow screens they wrap onto a second line. */
+  #page-research .rs-tabs{
+    display:flex; flex-wrap:wrap; gap:2px;
+    border-bottom:1px solid var(--ink); margin:36px 0 24px;
+  }
+  #page-research .rs-tab{
+    font-family:var(--sans); font-size:0.92rem; font-weight:500;
+    background:none; border:none; color:var(--purple-soft);
+    padding:10px 16px; cursor:pointer; position:relative; white-space:nowrap;
+  }
+  #page-research .rs-tab:hover{color:var(--purple-deep); background:rgba(75,46,131,0.04);}
+  #page-research .rs-tab.active{color:var(--purple-deep);}
+  #page-research .rs-tab.active::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:-1px;
+    height:2px; background:var(--gold);
+  }
+
+  #page-research .rs-chart{background:var(--white); border:1px solid var(--line); min-height:440px; margin-bottom:20px;}
+  #page-research .rs-chart-row{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+
+  #page-research table.holdings th,
+  #page-research table.holdings td{white-space:nowrap;}
+  #page-research table.holdings td:first-child{font-weight:600; color:var(--purple-deep);}
+
+  /* Frozen Period column on the Financial statements table. Sticky cells need
+     a solid background, so the hover tint is pre-blended with the page color. */
+  #page-research #rs-financials th:first-child,
+  #page-research #rs-financials td:first-child{
+    position:sticky; left:0; z-index:1;
+    background:var(--cream);
+    box-shadow:inset -1px 0 0 var(--line);
+  }
+  #page-research #rs-financials th:first-child{z-index:2;}
+  #page-research #rs-financials tr:hover td:first-child{background:#F1EDE9;}
+
+  @media (max-width: 1100px){
+    #page-research .rs-chart-row{grid-template-columns:1fr;}
+  }
+
+  @media (max-width: 880px){
+    #page-research .rs-grid-2,
+    #page-research .rs-search{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="#home" class="wordmark" onclick="go('home');return false;">Weber State Investors Club <small>WSIC · OGDEN, UT</small></a>
+    <nav class="links" id="navlinks">
+      <button data-page="home" onclick="go('home')" class="active">Home</button>
+      <button data-page="about" onclick="go('about')">About</button>
+      <button data-page="portfolio" onclick="go('portfolio')">Portfolio</button>
+      <button data-page="research" onclick="go('research')">Research</button>
+      <button data-page="donate" onclick="go('donate')">Donate</button>
+      <button class="join-btn" onclick="go('about')">Join the club</button>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<main>
+
+  <section id="page-home" class="page active">
+    <div class="hero">
+      <div>
+        <p class="eyebrow-plain">Student-managed · Since 2014</p>
+        <h1>We manage real capital, on the record, while we're still students.</h1>
+        <p class="lede">The Weber State Investors Club is a student-run organization that researches, debates, and trades a real equity portfolio — and publishes the results. No paper trading, no hypotheticals: every position on our tracker page is one we actually hold.</p>
+        <div class="cta-row">
+          <a href="#portfolio" class="btn-primary" onclick="go('portfolio');return false;">See our holdings</a>
+          <a href="#about" class="btn-secondary" onclick="go('about');return false;">How the club works</a>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="num" id="heroAUM">—</span><span class="lab">Assets under management</span></div>
+        <div class="stat"><span class="num">41</span><span class="lab">Active members this semester</span></div>
+        <div class="stat"><span class="num" id="heroGain">—</span><span class="lab">Unrealized gain on current holdings</span></div>
+        <div class="stat"><span class="num">2014</span><span class="lab">Founded, Goddard School of Business</span></div>
+      </div>
+    </div>
+
+    <div class="quicklinks">
+      <div class="quicklink">
+        <p class="idx">About</p>
+        <h3>Who runs the fund</h3>
+        <p>Meet the sector teams, the portfolio committee, and the faculty advisor who oversees us. <a class="goto" href="#about" onclick="go('about');return false;">Read more →</a></p>
+      </div>
+      <div class="quicklink">
+        <p class="idx">Portfolio</p>
+        <h3>Track what we own</h3>
+        <p>Live-updated holdings, sector weights, and performance since inception, same as we present it to our advisor. <a class="goto" href="#portfolio" onclick="go('portfolio');return false;">View tracker →</a></p>
+      </div>
+      <div class="quicklink">
+        <p class="idx">Research</p>
+        <h3>Analyze a company</h3>
+        <p>Turn any U.S.-listed company's SEC filings into ratios, charts, and a downloadable Excel model. <a class="goto" href="#research" onclick="go('research');return false;">Open the analyzer →</a></p>
+      </div>
+      <div class="quicklink">
+        <p class="idx">Donate</p>
+        <h3>Back the fund</h3>
+        <p>Gifts either grow the capital we invest or fund travel to case competitions and conferences. <a class="goto" href="#donate" onclick="go('donate');return false;">Give →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="page-about" class="page">
+    <p class="eyebrow-plain">About the club</p>
+    <h2>A classroom that answers to a P&amp;L.</h2>
+    <p class="lede">WSIC exists to teach fundamental investing by doing it with money that can actually be lost. We meet weekly in the Goddard School of Business, pitch and defend positions in front of the group, and vote on every trade before it goes in.</p>
+
+    <div class="two-col" style="margin-top:40px;">
+      <div>
+        <h3>How a pitch becomes a position</h3>
+        <p>A sector team researches a company for two to three weeks, builds a valuation model, and presents a thesis to the full club. Members question the pitch directly — on the numbers, not the delivery. A trade needs a majority vote and sign-off from the portfolio committee before it's placed.</p>
+      </div>
+      <div>
+        <h3>Who can join</h3>
+        <p>Any enrolled Weber State student, any major. Most members are in finance or economics, but some of our best sector leads have come from engineering and the sciences. New members start on a sector team; you don't need prior trading experience.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:52px;">Officers &amp; sector leads</h3>
+    <ul class="officer-list">
+      <li><span class="name">Marcus Reyes</span><span class="role">President</span><span class="sector">Portfolio Committee</span></li>
+      <li><span class="name">Priya Anand</span><span class="role">Vice President</span><span class="sector">Portfolio Committee</span></li>
+      <li><span class="name">Dallin Okafor</span><span class="role">Treasurer</span><span class="sector">Financials &amp; Reporting</span></li>
+      <li><span class="name">Sofia Lindqvist</span><span class="role">Sector Lead</span><span class="sector">Technology</span></li>
+      <li><span class="name">Ben Tanuvasa</span><span class="role">Sector Lead</span><span class="sector">Consumer &amp; Retail</span></li>
+      <li><span class="name">Grace Whitmore</span><span class="role">Sector Lead</span><span class="sector">Healthcare</span></li>
+      <li><span class="name">Dr. Evelyn Marsh</span><span class="role">Faculty Advisor</span><span class="sector">Goddard School of Business</span></li>
+    </ul>
+
+    <div style="margin-top:48px;">
+      <h3>Meetings</h3>
+      <p>Wednesdays, 5:00–6:15 PM, Goddard School of Business, Room 302. First meeting of the semester is open to all students — no application needed to sit in.</p>
+      <div class="cta-row">
+        <a href="mailto:investorsclub@weber.edu" class="btn-primary">Email the club</a>
+        <a href="#portfolio" class="btn-secondary" onclick="go('portfolio');return false;">See what we're holding</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="page-portfolio" class="page">
+    <p class="eyebrow-plain">Portfolio tracker</p>
+    <h2>What the club owns right now.</h2>
+    <p class="lede">Pulled directly from the club's Google Sheet. Figures update automatically whenever the sheet changes or prices move.</p>
+    <p style="font-family:var(--mono);font-size:.78rem;color:var(--purple-soft);margin-bottom:24px;"><span class="live-dot" id="liveDot"></span><span id="dataStatus">Loading holdings…</span></p>
+
+    <div class="overview-row">
+      <div class="ov"><span class="num" id="statAUM">—</span><span class="lab">Total AUM</span></div>
+      <div class="ov"><span class="num" id="statGainUsd">—</span><span class="lab">Unrealized gain ($)</span></div>
+      <div class="ov"><span class="num" id="statGainPct">—</span><span class="lab">Unrealized gain (%)</span></div>
+      <div class="ov"><span class="num" id="statPositions">—</span><span class="lab">Open positions</span></div>
+    </div>
+
+    <div class="table-scroll">
+    <table class="holdings">
+      <thead>
+        <tr>
+          <th>Ticker</th><th>Name</th><th>Sector</th>
+          <th class="num">Shares</th><th class="num">Avg cost</th><th class="num">Last</th>
+          <th class="num">Value</th><th class="num">Weight</th><th class="num">Total return</th><th class="num">YTD</th>
+        </tr>
+      </thead>
+      <tbody id="holdingsBody"></tbody>
+    </table>
+    </div>
+
+    <div class="alloc">
+      <h3>Sector allocation</h3>
+      <div id="allocList"></div>
+    </div>
+
+    <div class="trades">
+      <h3>Recent trades</h3>
+      <div class="table-scroll">
+      <table class="holdings">
+        <thead>
+          <tr>
+            <th>Date</th><th>Ticker</th><th>Action</th>
+            <th class="num">Shares</th><th class="num">Price</th><th class="num">Amount</th>
+          </tr>
+        </thead>
+        <tbody id="tradesBody"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <p class="disclaimer">WSIC is a student educational organization. This page is illustrative and not investment advice — decisions here are made by students learning fundamental analysis under faculty supervision, not licensed professionals. Past performance shown is not indicative of future results.</p>
+  </section>
+
+  <section id="page-research" class="page">
+    <p class="eyebrow-plain">Company research</p>
+    <h2>Analyze a company from its filings.</h2>
+    <p class="lede">Enter a ticker to pull standardized figures from the company's 10-K and 10-Q filings with the SEC, combine them with market prices from Twelve Data, and download the full analysis as an Excel workbook.</p>
+
+    <details id="rs-settings" class="rs-settings" open>
+      <summary>API access</summary>
+      <p id="rs-settings-note" class="rs-help"></p>
+
+      <div class="rs-grid-2">
+        <label class="rs-field">
+          <span>SEC User-Agent</span>
+          <input id="rs-user-agent" type="text" placeholder="WSUInvestmentClub/1.0 name@email.com"
+                 autocomplete="off" spellcheck="false">
+        </label>
+
+        <label class="rs-field">
+          <span>Twelve Data API key</span>
+          <input id="rs-api-key" type="password" autocomplete="off" spellcheck="false">
+        </label>
+      </div>
+    </details>
+
+    <form id="rs-form" class="rs-search">
+      <label class="rs-field">
+        <span>Ticker</span>
+        <input id="rs-ticker" type="text" placeholder="AAPL" maxlength="10"
+               autocomplete="off" required>
+      </label>
+
+      <label class="rs-field">
+        <span>Quarters to analyze: <strong id="rs-quarters-value">20</strong></span>
+        <input id="rs-quarters" type="range" min="8" max="40" step="4" value="20">
+      </label>
+
+      <button id="rs-submit" type="submit" class="btn-primary">Analyze company</button>
+    </form>
+
+    <p id="rs-status" class="rs-status" hidden></p>
+
+    <div id="rs-results" hidden>
+      <div class="rs-company">
+        <h3 id="rs-company-name"></h3>
+        <p id="rs-company-meta" class="rs-meta"></p>
+      </div>
+
+      <div id="rs-metrics" class="overview-row"></div>
+      <div id="rs-warnings"></div>
+
+      <div class="rs-tabs" role="tablist">
+        <button type="button" class="rs-tab active" data-rs-tab="overview">Overview</button>
+        <button type="button" class="rs-tab" data-rs-tab="financials">Financial statements</button>
+        <button type="button" class="rs-tab" data-rs-tab="ratios">Ratios</button>
+        <button type="button" class="rs-tab" data-rs-tab="excel">Excel report</button>
+      </div>
+
+      <div class="rs-panel" data-rs-panel="overview">
+        <div id="rs-chart-growth" class="rs-chart"></div>
+        <div class="rs-chart-row">
+          <div id="rs-chart-balance" class="rs-chart"></div>
+          <div id="rs-chart-cash" class="rs-chart"></div>
+        </div>
+      </div>
+
+      <div class="rs-panel" data-rs-panel="financials" hidden>
+        <div class="table-scroll"><table id="rs-financials" class="holdings"></table></div>
+        <p class="rs-help">Income-statement and cash-flow values are discrete quarters. Balance-sheet values represent the end of each reporting period.</p>
+      </div>
+
+      <div class="rs-panel" data-rs-panel="ratios" hidden>
+        <div class="table-scroll"><table id="rs-ratios" class="holdings"></table></div>
+        <p class="rs-help">TTM ratios require four complete quarters. A dash means the required standardized facts were unavailable or the calculation would have divided by zero.</p>
+      </div>
+
+      <div class="rs-panel" data-rs-panel="excel" hidden>
+        <h3>Excel report</h3>
+        <p>Download the completed workbook containing the Dashboard, Financial Data, and Ratios &amp; Metrics tabs.</p>
+        <button id="rs-download" type="button" class="btn-primary">Download Excel report</button>
+      </div>
+    </div>
+
+    <p class="disclaimer">Figures come from companies' standardized SEC filings and Twelve Data market prices, and may be incomplete or delayed. Check important numbers against the original filing. This tool is for education and is not investment advice.</p>
+  </section>
+
+  <section id="page-donate" class="page">
+    <p class="eyebrow-plain">Support the club</p>
+    <h2>Two ways to back what we're building.</h2>
+    <p class="lede">Every dollar we manage or spend is visible to the person who gave it. Gifts route through the Weber State University Foundation and are tax-deductible where applicable.</p>
+
+    <ul class="track-list" style="margin-top:36px;">
+      <li>
+        <span class="track-name">Fund capital</span>
+        <p>Added directly to the pool the club invests. It shows up as a position on the portfolio page like any other dollar we manage, and it compounds — or doesn't — right alongside the rest of the fund.</p>
+      </li>
+      <li>
+        <span class="track-name">Operating support</span>
+        <p>Covers what trading gains don't: travel to case competitions, CFA exam vouchers for graduating members, Bloomberg Terminal access, and guest speaker honoraria.</p>
+      </li>
+    </ul>
+
+    <h3 style="margin-top:52px;">Suggested gifts</h3>
+    <div class="tiers">
+      <div class="tier">
+        <span class="amt">$50</span>
+        <div class="desc">Covers one student's CFA Level I exam registration fee.</div>
+      </div>
+      <div class="tier">
+        <span class="amt">$250</span>
+        <div class="desc">Sends one sector team to a regional case competition.</div>
+      </div>
+      <div class="tier">
+        <span class="amt">$1,000+</span>
+        <div class="desc">Added to fund capital as a named position, credited to you on our annual report.</div>
+      </div>
+    </div>
+
+    <div class="cta-row" style="margin-top:36px;">
+      <a href="#" class="btn-primary">Give through the WSU Foundation</a>
+      <a href="mailto:investorsclub@weber.edu" class="btn-secondary">Ask about matching gifts</a>
+    </div>
+    <p class="disclaimer" style="margin-top:40px;">Replace the "Give" button with your club's actual WSU Foundation gift-fund link before publishing this page.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="fcol">
+      <strong style="color:#fff;">Weber State Investors Club</strong><br>
+      Goddard School of Business<br>
+      Weber State University, Ogden, UT
+      <div class="fnote">Template site with placeholder membership, performance, and giving data — update before publishing.</div>
+    </div>
+    <div class="fcol">
+      <a href="#home" onclick="go('home');return false;">Home</a><br>
+      <a href="#about" onclick="go('about');return false;">About</a><br>
+      <a href="#portfolio" onclick="go('portfolio');return false;">Portfolio</a><br>
+      <a href="#research" onclick="go('research');return false;">Research</a><br>
+      <a href="#donate" onclick="go('donate');return false;">Donate</a>
+    </div>
+    <div class="fcol">
+      <a href="mailto:investorsclub@weber.edu">investorsclub@weber.edu</a><br>
+      Meets Wednesdays, 5:00 PM<br>
+      Goddard School of Business, Rm 302
+    </div>
+  </div>
+</footer>
+
+<script>
+  function go(pageId){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    document.querySelectorAll('nav.links button[data-page]').forEach(b => b.classList.remove('active'));
+    var btn = document.querySelector('nav.links button[data-page="' + pageId + '"]');
+    if(btn) btn.classList.add('active');
+    window.scrollTo({top:0, behavior:'auto'});
+    try { history.replaceState(null, '', '#' + pageId); } catch(e) {}
+  }
+  window.addEventListener('DOMContentLoaded', function(){
+    var hash = location.hash.replace('#','');
+    var valid = ['home','about','portfolio','research','donate'];
+    if(valid.includes(hash)) go(hash);
+  });
+
+  // =====================================================================
+  // LIVE DATA FROM THE WSIC BACKEND
+  // The Python backend (wsic-backend/app) reads the club's Google Sheet and
+  // pushes a fresh snapshot here whenever a stock is added or sold, or a
+  // GOOGLEFINANCE price moves. If this page is served by the backend itself,
+  // leave API_BASE empty. If it's hosted elsewhere (e.g. GitHub Pages), put the
+  // backend's address here, e.g. 'https://wsic-api.onrender.com'.
+  // =====================================================================
+  var API_BASE = '';
+
+  function esc(v){
+    return String(v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function has(v){ return v !== null && v !== undefined && !isNaN(v); }
+  function fmtMoney(n){
+    var sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtMoney0(n){
+    var sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toLocaleString(undefined,{maximumFractionDigits:0});
+  }
+  function fmtPct(n){ return (n >= 0 ? '+' : '') + n.toFixed(1) + '%'; }
+  function fmtShares(n){ return n.toLocaleString(undefined,{maximumFractionDigits:4}); }
+  function fmtDate(iso){
+    var p = iso.split('-');
+    return new Date(+p[0], +p[1]-1, +p[2]).toLocaleDateString(undefined,{month:'short', day:'numeric', year:'numeric'});
+  }
+
+  var lastPrices = {};   // sym -> last price, to flash cells that moved
+  var lastVersion = null;
+
+  function renderPortfolio(data){
+    var holdings = data.holdings, s = data.summary;
+    if (!holdings || !holdings.length || !s) throw new Error('Empty portfolio');
+    if (data.meta && data.meta.version === lastVersion){ renderStatus(data.meta, true); return; }
+    lastVersion = data.meta ? data.meta.version : null;
+
+    // ticker tape (cash rows skipped)
+    var tape = holdings.filter(function(h){ return !h.cash && has(h.last); }).map(function(h){
+      var hasRet = has(h.ret);
+      var cls = hasRet && h.ret < 0 ? 'down' : 'up';
+      return '<span class="ticker-item"><span class="sym">' + esc(h.sym) + '</span>' + fmtMoney(h.last) +
+        (hasRet ? ' <span class="' + cls + '">' + fmtPct(h.ret) + '</span>' : '') + '</span>';
+    }).join('');
+    document.getElementById('tickerTrack').innerHTML = tape + tape;
+
+    // holdings table, largest position first (backend already sorted)
+    var newPrices = {};
+    document.getElementById('holdingsBody').innerHTML = holdings.map(function(h){
+      function pctCell(v){
+        if (h.cash || !has(v)) return '<td class="num">—</td>';
+        return '<td class="num chg ' + (v < 0 ? 'down' : 'up') + '">' + fmtPct(v) + '</td>';
+      }
+      var flash = '';
+      if (has(h.last)){
+        newPrices[h.sym] = h.last;
+        var prev = lastPrices[h.sym];
+        if (has(prev) && prev !== h.last) flash = h.last > prev ? ' flash-up' : ' flash-down';
+      }
+      return '<tr>' +
+        '<td class="sym">' + esc(h.sym) + '</td>' +
+        '<td>' + esc(h.name) + '</td>' +
+        '<td>' + esc(h.sector) + '</td>' +
+        '<td class="num">' + (has(h.shares) ? fmtShares(h.shares) : '—') + '</td>' +
+        '<td class="num">' + (has(h.cost) ? fmtMoney(h.cost) : '—') + '</td>' +
+        '<td class="num' + flash + '">' + (has(h.last) ? fmtMoney(h.last) : '—') + '</td>' +
+        '<td class="num">' + fmtMoney(h.value) + '</td>' +
+        '<td class="num">' + h.weight.toFixed(1) + '%</td>' +
+        pctCell(h.ret) + pctCell(h.ytd) +
+        '</tr>';
+    }).join('');
+    lastPrices = newPrices;
+
+    // sector allocation
+    document.getElementById('allocList').innerHTML = s.allocation.map(function(a){
+      var pct = a.pct.toFixed(1);
+      return '<div class="alloc-row"><span class="name">' + esc(a.sector) + '</span>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<span class="pct">' + pct + '%</span></div>';
+    }).join('');
+
+    // recent trades
+    var trades = (data.transactions || []).slice(0, 12);
+    document.getElementById('tradesBody').innerHTML = trades.length ? trades.map(function(t){
+      var act = (t.action || '').toLowerCase();
+      var cls = act.indexOf('buy') === 0 ? 'buy' : (act.indexOf('sell') === 0 ? 'sell' : '');
+      return '<tr>' +
+        '<td>' + esc(fmtDate(t.date)) + '</td>' +
+        '<td class="sym">' + esc(t.sym) + '</td>' +
+        '<td><span class="action ' + cls + '">' + esc(t.action || '—') + '</span></td>' +
+        '<td class="num">' + (has(t.shares) ? fmtShares(t.shares) : '—') + '</td>' +
+        '<td class="num">' + (has(t.price) ? fmtMoney(t.price) : '—') + '</td>' +
+        '<td class="num">' + (has(t.amount) ? fmtMoney(t.amount) : '—') + '</td>' +
+        '</tr>';
+    }).join('') : '<tr><td colspan="6" style="color:var(--purple-soft);">No trades recorded yet.</td></tr>';
+
+    // headline numbers
+    var gainCls = s.unrealized_gain < 0 ? 'down' : 'pos';
+    document.getElementById('heroAUM').textContent = fmtMoney0(s.total_value);
+    document.getElementById('heroGain').textContent = fmtPct(s.unrealized_gain_pct);
+    document.getElementById('statAUM').textContent = fmtMoney0(s.total_value);
+    document.getElementById('statPositions').textContent = s.positions;
+    var gu = document.getElementById('statGainUsd'), gp = document.getElementById('statGainPct');
+    gu.textContent = fmtMoney0(s.unrealized_gain); gp.textContent = fmtPct(s.unrealized_gain_pct);
+    gu.className = 'num ' + gainCls; gp.className = 'num ' + gainCls;
+
+    renderStatus(data.meta, true);
+  }
+
+  var streamLive = false;
+  function renderStatus(meta, ok){
+    var dot = document.getElementById('liveDot');
+    dot.className = 'live-dot ' + (ok && streamLive ? 'on' : (ok ? '' : 'off'));
+    if (!meta) return;
+    var changed = meta.last_changed ? new Date(meta.last_changed).toLocaleString() : 'unknown';
+    var text = (streamLive ? 'Live' : 'Auto-refreshing') + ' · from the club\'s Google Sheet · last change ' + changed;
+    if (meta.error) text += ' · sheet temporarily unreachable, showing last good data';
+    document.getElementById('dataStatus').textContent = text;
+  }
+
+  function showLoadProblem(msg){
+    document.getElementById('dataStatus').textContent = msg;
+    document.getElementById('liveDot').className = 'live-dot off';
+    if (!lastVersion){
+      document.getElementById('holdingsBody').innerHTML =
+        '<tr><td colspan="10" style="color:var(--purple-soft);">Holdings aren\'t available right now. Check back shortly.</td></tr>';
+    }
+  }
+
+  function handle(data){
+    try { renderPortfolio(data); }
+    catch (err){
+      console.error('Could not render the portfolio:', err);
+      showLoadProblem('Could not load the portfolio. Showing nothing rather than outdated numbers.');
+    }
+  }
+
+  // One-off fetch: first paint, and the fallback if the live stream isn't available.
+  function loadHoldings(){
+    return fetch(API_BASE + '/api/portfolio', {cache:'no-store'})
+      .then(function(res){ return res.json().then(function(d){ if (!res.ok && !d.holdings.length) throw new Error('HTTP ' + res.status); return d; }); })
+      .then(handle)
+      .catch(function(err){
+        console.error('Could not reach the portfolio backend:', err);
+        if (!lastVersion) showLoadProblem('Could not reach the portfolio server. Retrying…');
+      });
+  }
+
+  // Live updates: the backend pushes a new snapshot the moment the sheet changes.
+  function connectStream(){
+    if (!window.EventSource) return;
+    var es = new EventSource(API_BASE + '/api/stream');
+    es.addEventListener('portfolio', function(e){ streamLive = true; handle(JSON.parse(e.data)); });
+    es.onopen = function(){ streamLive = true; };
+    es.onerror = function(){ streamLive = false; renderStatus(null, !!lastVersion); }; // browser reconnects on its own
+  }
+
+  loadHoldings();
+  connectStream();
+  // Safety net in case the stream is blocked by a network proxy.
+  setInterval(function(){ if (!streamLive) loadHoldings(); }, 60 * 1000);
+</script>
+
+<script>
+/*
+ * Research page: the company analyzer. Everything is inside this function,
+ * every element ID starts with "rs-", and nothing is added to the page's
+ * global scope, so it can't collide with the portfolio code above.
+ */
+(function () {
+  "use strict";
+
+  // Leave empty when this page is served by the backend itself. If it's hosted
+  // elsewhere, put the backend's address here (same value as API_BASE above).
+  const RESEARCH_API_BASE = "";
+
+  // Club palette, in the order chart lines use it.
+  const CHART_COLORS = ["#4B2E83", "#C89B3C", "#3F7D5C", "#B24A3D", "#6B5B8A"];
+
+  // Financial statements columns: [field, label, format]. Formats:
+  //   text      shown as-is
+  //   dollars   whole dollars, e.g. $1,234,567
+  //   per_share dollars and cents, e.g. $6.42
+  //   count     plain whole number (no $)
+  const FINANCIAL_FIELDS = [
+    ["period", "Period", "text"],
+    ["period_end", "Period end", "text"],
+    ["revenue", "Revenue", "dollars"],
+    ["gross_profit", "Gross profit", "dollars"],
+    ["operating_income", "Operating income", "dollars"],
+    ["net_income", "Net income", "dollars"],
+    ["diluted_eps", "Diluted EPS", "per_share"],
+    ["operating_cash_flow", "Operating cash flow", "dollars"],
+    ["capital_expenditures", "Capital expenditures", "dollars"],
+    ["free_cash_flow", "Free cash flow", "dollars"],
+    ["cash", "Cash", "dollars"],
+    ["inventory", "Inventory", "dollars"],
+    ["total_assets", "Total assets", "dollars"],
+    ["total_debt", "Total debt", "dollars"],
+    ["shareholders_equity", "Shareholders' equity", "dollars"],
+    ["shares_outstanding", "Shares outstanding", "count"],
+    ["quarter_open", "Quarter open", "per_share"],
+    ["quarter_close", "Quarter close", "per_share"],
+  ];
+
+  const CHARTS = [
+    {
+      id: "rs-chart-growth",
+      file: "growth_and_profitability",
+      title: "Growth and profitability",
+      fields: [
+        ["revenue", "Revenue"],
+        ["gross_profit", "Gross profit"],
+        ["operating_income", "Operating income"],
+        ["net_income", "Net income"],
+      ],
+    },
+    {
+      id: "rs-chart-balance",
+      file: "balance_sheet",
+      title: "Balance sheet",
+      fields: [
+        ["total_assets", "Assets"],
+        ["total_liabilities", "Liabilities"],
+        ["total_debt", "Debt"],
+        ["cash", "Cash"],
+        ["inventory", "Inventory"],
+      ],
+    },
+    {
+      id: "rs-chart-cash",
+      file: "cash_flow",
+      title: "Cash flow",
+      fields: [
+        ["operating_cash_flow", "Operating cash flow"],
+        ["capital_expenditures", "Capital expenditures"],
+        ["free_cash_flow", "Free cash flow"],
+      ],
+    },
+  ];
+
+  let elements = null;
+
+  // Whether the server has its own keys to fall back on.
+  let serverHasKeys = false;
+
+  // The last successful request, reused for the Excel download.
+  let lastRequest = null;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  function init() {
+    const page = byId("page-research");
+
+    if (!page) {
+      return;
+    }
+
+    elements = {
+      form: byId("rs-form"),
+      ticker: byId("rs-ticker"),
+      quarters: byId("rs-quarters"),
+      quartersValue: byId("rs-quarters-value"),
+      submit: byId("rs-submit"),
+      status: byId("rs-status"),
+      settings: byId("rs-settings"),
+      settingsNote: byId("rs-settings-note"),
+      userAgent: byId("rs-user-agent"),
+      apiKey: byId("rs-api-key"),
+      results: byId("rs-results"),
+      download: byId("rs-download"),
+    };
+
+    elements.quarters.addEventListener("input", () => {
+      elements.quartersValue.textContent = elements.quarters.value;
+    });
+
+    elements.form.addEventListener("submit", analyze);
+    elements.download.addEventListener("click", downloadReport);
+
+    page.querySelectorAll(".rs-tab").forEach((tab) => {
+      tab.addEventListener("click", () => selectTab(tab.dataset.rsTab));
+    });
+
+    watchChartSizes();
+    checkServerKeys();
+  }
+
+  async function analyze(event) {
+    event.preventDefault();
+
+    const ticker = elements.ticker.value.trim().toUpperCase();
+    const quarters = elements.quarters.value;
+
+    if (!ticker) {
+      showStatus("Enter a ticker symbol.", "error");
+      return;
+    }
+
+    const headers = credentialHeaders();
+    const problem = credentialProblem(headers);
+
+    if (problem) {
+      elements.settings.open = true;
+      showStatus(problem, "error");
+      return;
+    }
+
+    const params = new URLSearchParams({ ticker, quarters });
+
+    elements.submit.disabled = true;
+    showStatus(`Reading SEC filings and market data for ${ticker}…`, "info");
+
+    try {
+      const response = await fetch(
+        `${RESEARCH_API_BASE}/api/research/analyze?${params}`,
+        { headers },
+      );
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(errorMessage(payload));
+      }
+
+      lastRequest = { params, headers, ticker: payload.company.ticker };
+
+      hideStatus();
+      showResults(payload);
+
+    } catch (error) {
+      showStatus(error.message || "The analysis could not be completed.", "error");
+
+    } finally {
+      elements.submit.disabled = false;
+    }
+  }
+
+  async function checkServerKeys() {
+    try {
+      const response = await fetch(`${RESEARCH_API_BASE}/api/research/health`);
+      const payload = await response.json();
+      serverHasKeys = Boolean(payload.server_keys);
+
+    } catch (error) {
+      serverHasKeys = false;
+    }
+
+    if (serverHasKeys) {
+      elements.settingsNote.textContent =
+        "This server already has keys configured. Leave these blank to use " +
+        "them, or enter your own.";
+      elements.settings.open = false;
+
+    } else {
+      elements.settingsNote.textContent =
+        "Keys are sent only to this site's server with each request and are " +
+        "not stored. Both fields must be re-entered after the page reloads.";
+    }
+  }
+
+  function credentialHeaders() {
+    const headers = {};
+    const userAgent = elements.userAgent.value.trim();
+    const apiKey = elements.apiKey.value.trim();
+
+    if (userAgent) {
+      headers["X-SEC-User-Agent"] = userAgent;
+    }
+
+    if (apiKey) {
+      headers["X-Market-Api-Key"] = apiKey;
+    }
+
+    return headers;
+  }
+
+  function credentialProblem(headers) {
+    const userAgent = headers["X-SEC-User-Agent"];
+
+    if (userAgent && !userAgent.includes("@")) {
+      return "The SEC User-Agent must include a monitored email address.";
+    }
+
+    if (serverHasKeys) {
+      return null;
+    }
+
+    if (!userAgent) {
+      return (
+        "Enter an SEC User-Agent that includes a monitored email address, " +
+        "such as WSUInvestmentClub/1.0 name@email.com."
+      );
+    }
+
+    if (!headers["X-Market-Api-Key"]) {
+      return "Enter your Twelve Data API key.";
+    }
+
+    return null;
+  }
+
+  async function downloadReport() {
+    if (!lastRequest) {
+      return;
+    }
+
+    const label = elements.download.textContent;
+    elements.download.disabled = true;
+    elements.download.textContent = "Preparing report…";
+
+    try {
+      const response = await fetch(
+        `${RESEARCH_API_BASE}/api/research/report?${lastRequest.params}`,
+        { headers: lastRequest.headers },
+      );
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(errorMessage(payload));
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${lastRequest.ticker}_investment_analysis.xlsx`;
+      document.body.append(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    } catch (error) {
+      showStatus(error.message || "The report could not be downloaded.", "error");
+
+    } finally {
+      elements.download.disabled = false;
+      elements.download.textContent = label;
+    }
+  }
+
+  function showResults(data) {
+    const company = data.company;
+    const summary = data.summary;
+
+    byId("rs-company-name").textContent =
+      `${company.company_name} (${company.ticker})`;
+
+    byId("rs-company-meta").textContent = [
+      company.company_type,
+      company.sector || "Sector unavailable",
+      `Latest filing period: ${summary.last_period}`,
+    ].join(" · ");
+
+    renderMetrics(summary, company.currency);
+    renderWarnings(data.warnings);
+    renderFinancials(data.records, company.currency);
+    renderRatios(data);
+
+    // Show the results before drawing charts so Plotly can measure them.
+    elements.results.hidden = false;
+    selectTab("overview");
+    renderCharts(data.records, company.ticker);
+  }
+
+  function renderMetrics(summary, currency) {
+    const metrics = [
+      ["Current price", money(summary.current_price, currency), null],
+      ["Market cap", compact(summary.market_capitalization, currency), null],
+      ["TTM revenue", compact(summary.ttm_revenue, currency), null],
+      [
+        "TTM free cash flow",
+        compact(summary.ttm_free_cash_flow, currency),
+        summary.ttm_free_cash_flow,
+      ],
+      ["Data completeness", percent(summary.data_completeness, 0), null],
+    ];
+
+    const container = byId("rs-metrics");
+    container.replaceChildren();
+
+    for (const [label, value, signedValue] of metrics) {
+      const number = element("span", "num", value);
+
+      if (isNumber(signedValue)) {
+        number.classList.add(signedValue < 0 ? "down" : "pos");
+      }
+
+      const card = element("div", "ov");
+      card.append(number, element("span", "lab", label));
+      container.append(card);
+    }
+  }
+
+  function renderWarnings(warnings) {
+    const container = byId("rs-warnings");
+    container.replaceChildren();
+
+    for (const warning of warnings) {
+      container.append(element("p", "rs-status warning", warning));
+    }
+  }
+
+  function renderCharts(records, ticker) {
+    const periods = records.map((record) => record.period);
+
+    for (const chart of CHARTS) {
+      const traces = chart.fields.map(([field, label]) => ({
+        x: periods,
+        y: records.map((record) => record[field]),
+        name: label,
+        type: "scatter",
+        mode: "lines+markers",
+        line: { width: 2 },
+        marker: { size: 5 },
+        connectgaps: false,
+      }));
+
+      Plotly.newPlot(
+        chart.id,
+        traces,
+        {
+          height: 440,
+          title: {
+            text: chart.title,
+            x: 0.02,
+            font: { family: '"Source Serif 4", Georgia, serif', size: 18, color: "#332059" },
+          },
+          font: { family: '"IBM Plex Sans", Helvetica, Arial, sans-serif', size: 12, color: "#201533" },
+          colorway: CHART_COLORS,
+          paper_bgcolor: "#FFFFFF",
+          plot_bgcolor: "#FFFFFF",
+          hovermode: "x unified",
+          // No click-and-drag zooming or panning; hovering still works.
+          dragmode: false,
+          // Small base margins; automargin grows them to fit the labels.
+          margin: { l: 60, r: 20, t: 70, b: 20 },
+          legend: { orientation: "h", y: 1.12, x: 0, font: { size: 11 } },
+          xaxis: {
+            gridcolor: "#EEE8DD",
+            linecolor: "#DDD5C8",
+            tickangle: -45,
+            automargin: true,
+            fixedrange: true,
+          },
+          yaxis: {
+            gridcolor: "#EEE8DD",
+            zerolinecolor: "#DDD5C8",
+            exponentformat: "B",
+            title: { text: "Reported currency" },
+            automargin: true,
+            fixedrange: true,
+          },
+        },
+        {
+          responsive: true,
+          displaylogo: false,
+          // The toolbar holds only "Download plot as a png".
+          modeBarButtons: [["toImage"]],
+          toImageButtonOptions: {
+            format: "png",
+            filename: `${ticker}_${chart.file}`,
+            scale: 2,
+          },
+          scrollZoom: false,
+          doubleClick: false,
+        },
+      );
+    }
+  }
+
+  // Plotly can't size a chart while its page or tab is hidden. Watch the chart
+  // boxes and redraw whenever they become visible or change width.
+  function watchChartSizes() {
+    if (!window.ResizeObserver) {
+      return;
+    }
+
+    const widths = new WeakMap();
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const node = entry.target;
+        const width = Math.round(entry.contentRect.width);
+
+        if (width > 0 && widths.get(node) !== width && node.data && window.Plotly) {
+          widths.set(node, width);
+          Plotly.Plots.resize(node);
+        }
+      }
+    });
+
+    for (const chart of CHARTS) {
+      observer.observe(byId(chart.id));
+    }
+  }
+
+  function renderFinancials(records, currency) {
+    const rows = [...records].reverse().map((record) =>
+      FINANCIAL_FIELDS.map(([field, , format]) =>
+        formatCell(record[field], format, currency),
+      ),
+    );
+
+    fillTable(
+      byId("rs-financials"),
+      FINANCIAL_FIELDS.map(([, label]) => label),
+      rows,
+      2,
+    );
+  }
+
+  function renderRatios(data) {
+    const currency = data.company.currency;
+
+    const rows = data.ratio_definitions.map((definition) => [
+      definition.category,
+      definition.label,
+      formatRatio(data.latest_ratios[definition.key], definition.format, currency),
+    ]);
+
+    fillTable(
+      byId("rs-ratios"),
+      ["Category", "Ratio / metric", "Latest value"],
+      rows,
+      2,
+    );
+  }
+
+  // Columns from firstNumericColumn onward are right-aligned, like the
+  // holdings table on the Portfolio page.
+  function fillTable(table, headers, rows, firstNumericColumn) {
+    table.replaceChildren();
+
+    const head = table.createTHead().insertRow();
+
+    headers.forEach((header, index) => {
+      const cell = document.createElement("th");
+      cell.textContent = header;
+
+      if (index >= firstNumericColumn) {
+        cell.className = "num";
+      }
+
+      head.append(cell);
+    });
+
+    const body = table.createTBody();
+
+    for (const row of rows) {
+      const tableRow = body.insertRow();
+
+      row.forEach((value, index) => {
+        const cell = tableRow.insertCell();
+        cell.textContent = value;
+
+        if (index >= firstNumericColumn) {
+          cell.className = "num";
+        }
+      });
+    }
+  }
+
+  function selectTab(name) {
+    document.querySelectorAll("#page-research .rs-tab").forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.rsTab === name);
+    });
+
+    document.querySelectorAll("#page-research .rs-panel").forEach((panel) => {
+      panel.hidden = panel.dataset.rsPanel !== name;
+    });
+  }
+
+  function showStatus(message, kind) {
+    elements.status.textContent = message;
+    elements.status.className = `rs-status ${kind}`;
+    elements.status.hidden = false;
+  }
+
+  function hideStatus() {
+    elements.status.hidden = true;
+  }
+
+  function errorMessage(payload) {
+    if (Array.isArray(payload.detail)) {
+      return "Enter a valid ticker (letters, numbers, '.' or '-').";
+    }
+
+    return payload.detail || "The analysis could not be completed.";
+  }
+
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+  function element(tag, className, text) {
+    const node = document.createElement(tag);
+    node.className = className;
+
+    if (text !== undefined) {
+      node.textContent = text;
+    }
+
+    return node;
+  }
+
+  function isNumber(value) {
+    return typeof value === "number" && Number.isFinite(value);
+  }
+
+  function formatCell(value, format, currency) {
+    if (value === null || value === undefined) {
+      return "—";
+    }
+
+    if (format === "text") {
+      return value;
+    }
+
+    if (format === "per_share") {
+      return money(value, currency);
+    }
+
+    if (format === "dollars") {
+      return wholeMoney(value, currency);
+    }
+
+    return Math.round(value).toLocaleString();
+  }
+
+  function formatRatio(value, format, currency) {
+    if (!isNumber(value)) {
+      return "—";
+    }
+
+    if (format === "percent") {
+      return percent(value, 1);
+    }
+
+    if (format === "multiple") {
+      return `${value.toFixed(2)}×`;
+    }
+
+    if (format === "days") {
+      return `${value.toFixed(1)} days`;
+    }
+
+    return compact(value, currency);
+  }
+
+  // "$" for U.S. dollars, matching the Portfolio page; the currency code otherwise.
+  function currencyPrefix(currency) {
+    return currency === "USD" ? "$" : `${currency} `;
+  }
+
+  function money(value, currency) {
+    if (!isNumber(value)) {
+      return "—";
+    }
+
+    const sign = value < 0 ? "-" : "";
+
+    return sign + currencyPrefix(currency) + Math.abs(value).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  function wholeMoney(value, currency) {
+    if (!isNumber(value)) {
+      return "—";
+    }
+
+    const sign = value < 0 ? "-" : "";
+
+    return sign + currencyPrefix(currency) + Math.round(Math.abs(value)).toLocaleString();
+  }
+
+  function compact(value, currency) {
+    if (!isNumber(value)) {
+      return "—";
+    }
+
+    const sign = value < 0 ? "-" : "";
+    const absolute = Math.abs(value);
+
+    const scales = [
+      [1e12, "T"],
+      [1e9, "B"],
+      [1e6, "M"],
+      [1e3, "K"],
+    ];
+
+    for (const [divisor, suffix] of scales) {
+      if (absolute >= divisor) {
+        return `${sign}${currencyPrefix(currency)}${(absolute / divisor).toFixed(2)}${suffix}`;
+      }
+    }
+
+    return `${sign}${currencyPrefix(currency)}${absolute.toFixed(2)}`;
+  }
+
+  function percent(value, digits) {
+    if (!isNumber(value)) {
+      return "—";
+    }
+
+    return `${(value * 100).toFixed(digits)}%`;
+  }
+})();
+</script>
+
+</body>
+</html>

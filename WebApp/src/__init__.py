@@ -1,0 +1,1 @@
+"""Investment Analyzer application package."""
